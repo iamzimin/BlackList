@@ -38,7 +38,7 @@ class BlackListDatabase:
         query.exec(f"UPDATE {config.TABLE_NAME} SET "
                    f"{BLOCK_GAME_FIELD} = '{player.block_game}', "
                    f"{DESCRIPTION_FIELD} = '{player.description}' "
-                   f"WHERE {NAME_FIELD} = '{player.name}'")
+                   f"WHERE LOWER({NAME_FIELD}) = '{player.name.lower()}'")
 
     @staticmethod
     def insert_player(player: PlayerData):
@@ -48,16 +48,16 @@ class BlackListDatabase:
                    f"VALUES ('{player.name}', '{player.block_game}', '{player.description}')")
 
     @staticmethod
-    def delete_player_by_name(player_name):
+    def delete_player_by_name(player_name: str):
         query = QSqlQuery()
         query.exec(f"DELETE FROM {config.TABLE_NAME} "
-                   f"WHERE {NAME_FIELD} = '{player_name}'")
+                   f"WHERE LOWER({NAME_FIELD}) = '{player_name.lower()}'")
 
     @staticmethod
     def get_player_by_name(player_name: str) -> Union[PlayerData, None]:
         query = QSqlQuery()
         query.exec(f"SELECT * FROM {config.TABLE_NAME} "
-                   f"WHERE {NAME_FIELD} = '{player_name}'")
+                   f"WHERE LOWER({NAME_FIELD}) = '{player_name.lower()}'")
 
         if query.next():
             name = query.record().value(NAME_FIELD)

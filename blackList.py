@@ -42,6 +42,7 @@ class BlackListApp(QMainWindow):
         block_game_label = QLabel("Заблокированные игры:")
         self.block_game = QLineEdit()
         self.block_game.setValidator(QIntValidator(0, 999999999))
+        self.block_game.textChanged.connect(self.check_space)
 
         description_label = QLabel("Причина:")
         self.description = QLineEdit()
@@ -180,6 +181,7 @@ class BlackListApp(QMainWindow):
         self.description.setText(player.description)
 
     def on_name_edit_changed(self):
+        self.check_space()
         player_name = self.name_edit.text().strip()
         player = BlackListDatabase.get_player_by_name(player_name=player_name)
         if player is not None:
@@ -187,6 +189,11 @@ class BlackListApp(QMainWindow):
         else:
             self.block_game.clear()
             self.description.clear()
+
+    def check_space(self):
+        self.name_edit.setText(self.name_edit.text().replace(' ', ''))
+        self.block_game.setText(self.block_game.text().replace(' ', ''))
+
     """ ================================================================== """
 
     """ Player manager """
