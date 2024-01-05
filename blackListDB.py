@@ -1,3 +1,6 @@
+import copy
+import re
+
 from PyQt6.QtSql import QSqlDatabase, QSqlQuery
 from typing import Union
 
@@ -68,14 +71,25 @@ class BlackListDatabase:
     def find_players_by_name(players_name: list[str]) -> list[PlayerData]:
         players = BlackListDatabase.get_all_players(is_sorted=True)
         filtered_players_dict = {}
-        for player in players:
+
+        for key, value in config.IDENTICAL_CHARACTERS.items():
+            for i in range(len(players_name)):
+                players_name[i] = re.sub(re.escape(key), value, players_name[i].lower())
+
+        players_edited = copy.deepcopy(players)
+        for key, value in config.IDENTICAL_CHARACTERS.items():
+            for i in range(len(players_edited)):
+                players_edited[i].name = re.sub(re.escape(key), value, players_edited[i].name.lower())
+
+        for i in range(len(players_edited)):
             for name in players_name:
                 if config.MAXIMUM_NICKNAME_COMPARE < 0:
-                    if player.name.lower() == name.lower():
-                        filtered_players_dict[player.name] = player
+                    if players_edited[i].name.lower() == name.lower():
+                        filtered_players_dict[players_edited[i].name] = players[i]
                 else:
-                    if player.name[:config.MAXIMUM_NICKNAME_COMPARE].lower() == name[:config.MAXIMUM_NICKNAME_COMPARE].lower():
-                        filtered_players_dict[player.name] = player
+                    if players_edited[i].name[:config.MAXIMUM_NICKNAME_COMPARE].lower() == name[:config.MAXIMUM_NICKNAME_COMPARE].lower():
+                        filtered_players_dict[players_edited[i].name] = players[i]
+
         return list(filtered_players_dict.values())
 
     @staticmethod

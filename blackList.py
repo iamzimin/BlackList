@@ -2,6 +2,7 @@ import os
 import re
 import sys
 
+from PyQt6 import QtGui
 from PyQt6.QtCore import Qt, QRect
 from PyQt6.QtWidgets import QApplication, QMainWindow, QLabel, QLineEdit, QPushButton, QHBoxLayout, QFormLayout, \
     QListWidget, QFileDialog, QWidget, QListWidgetItem, QToolTip
@@ -23,6 +24,7 @@ class BlackListApp(QMainWindow):
     def __init__(self):
         super().__init__()
 
+        self.setWindowIcon(QtGui.QIcon('BlackList.ico'))
         self.setWindowTitle(f"{config.TABLE_NAME} Blacklist Manager")
         self.setGeometry(100, 100, 700, 500)
 
