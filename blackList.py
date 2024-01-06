@@ -3,10 +3,10 @@ import re
 import sys
 
 from PyQt6 import QtGui
-from PyQt6.QtCore import Qt, QRect
+from PyQt6.QtCore import Qt, QRect, QRegularExpression
 from PyQt6.QtWidgets import QApplication, QMainWindow, QLabel, QLineEdit, QPushButton, QHBoxLayout, QFormLayout, \
     QListWidget, QFileDialog, QWidget, QListWidgetItem, QToolTip
-from PyQt6.QtGui import QPixmap, QIntValidator, QFont, QColor, QCursor, QImage
+from PyQt6.QtGui import QPixmap, QIntValidator, QFont, QColor, QCursor, QImage, QRegularExpressionValidator
 from PIL import Image
 import pytesseract
 
@@ -33,16 +33,19 @@ class BlackListApp(QMainWindow):
     def setup_ui(self):
         BlackListDatabase.init_database()
 
+        space_regex = QRegularExpression("[^\\s]+")
+        int_regex = QRegularExpression("^[0-9]{1,9}$")
+
         # Widgets
         name_label = QLabel("Имя игрока:")
         self.name_edit = QLineEdit()
+        self.name_edit.setValidator(QRegularExpressionValidator(space_regex))
         if config.FIND_BY_NAME:
             self.name_edit.textChanged.connect(self.on_name_edit_changed)
 
         block_game_label = QLabel("Заблокированные игры:")
         self.block_game = QLineEdit()
-        self.block_game.setValidator(QIntValidator(0, 999999999))
-        self.block_game.textChanged.connect(self.check_space)
+        self.block_game.setValidator(QRegularExpressionValidator(int_regex))
 
         description_label = QLabel("Причина:")
         self.description = QLineEdit()
@@ -181,7 +184,6 @@ class BlackListApp(QMainWindow):
         self.description.setText(player.description)
 
     def on_name_edit_changed(self):
-        self.check_space()
         player_name = self.name_edit.text().strip()
         player = BlackListDatabase.get_player_by_name(player_name=player_name)
         if player is not None:
@@ -189,11 +191,6 @@ class BlackListApp(QMainWindow):
         else:
             self.block_game.clear()
             self.description.clear()
-
-    def check_space(self):
-        self.name_edit.setText(self.name_edit.text().replace(' ', ''))
-        self.block_game.setText(self.block_game.text().replace(' ', ''))
-
     """ ================================================================== """
 
     """ Player manager """
@@ -209,8 +206,8 @@ class BlackListApp(QMainWindow):
         try:
             player = PlayerData(name=player_name, block_game=int(block_game), description=description)
         except ValueError:
-            Log.save_log("Неверное значение поля \"Заблокированные игры\"")
-            exit(1)
+            self.show_toast("Неверное значение поля \"Заблокированные игры\"")
+            return
 
         if BlackListDatabase.get_player_by_name(player_name=player.name) is not None:
             BlackListDatabase.update_player(player=player)
