@@ -1,4 +1,4 @@
-### BlockList
+# BlockList
 **BlockList** - приложение, которое позволяет распознать ники с фото и найти их в базе данных, вручную добавлять/обновлять/удалять/искать записи из чёрного списка.
 Создано, чтобы облегчить поиск игроков, которые когда-либо мешали игре.
 
@@ -18,10 +18,10 @@
 
 
 
-# Скачать скомпилированную версию BlockList.exe
+## Скачать скомпилированную версию BlockList.exe
 > https://github.com/iamzimin/BlackList/releases/latest
 
-# Установка
+## Установка
 1. ```git pull https://github.com/iamzimin/BlackList.git```
 2. Скачайте [Tesseract OCR.exe](https://github.com/UB-Mannheim/tesseract/wiki) и установите в папку репозитория
 3. Установите необходимые библиотеки 
