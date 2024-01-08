@@ -70,12 +70,12 @@ class ConfigManager:
                 except Exception:
                     Log.save_log(f"Неверное составление файла конфигурации (поля {key}). "
                                  f"Удалите конфиг файл, чтобы вернуть значения по умолчанию.")
-                    exit(1)
+                    raise Exception(f"Неверное составление файла конфигурации (поля {key}). "
+                                    f"Удалите конфиг файл, чтобы вернуть значения по умолчанию.")
 
         except FileNotFoundError:
             self.save_config()
             Log.save_log("Файл конфигурации не найден. Используются значения по умолчанию.")
-            exit(1)
 
     def save_config(self):
         with open(self.config_file_path, 'w') as file:
